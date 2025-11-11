@@ -1,0 +1,30 @@
+[Unit]
+Description=Ops Agent API v3
+After=network.target llm.service rag.service
+Wants=llm.service rag.service
+
+[Service]
+Type=simple
+User=agent
+WorkingDirectory=/home/agent/agent
+ExecStart=/usr/bin/python3 /home/agent/agent/agent_v3.py
+Restart=on-failure
+RestartSec=10
+
+# Resource Limits
+MemoryMax=512M
+CPUQuota=50%
+
+# Security - Relaxed for agent operations (has sudo NOPASSWD: ALL)
+# NoNewPrivileges=false allows sudo to work
+NoNewPrivileges=false
+ProtectSystem=false
+ProtectHome=false
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agent-api
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+[Unit]
+Description=Local LLM Server (llama.cpp) - Qwen2.5-3B OPTIMIZED
+After=network.target
+
+[Service]
+Type=simple
+User=agent
+WorkingDirectory=/home/agent/llama.cpp/build/bin
+Environment="LD_LIBRARY_PATH=/home/agent/llama.cpp/build/bin"
+ExecStart=/home/agent/llama.cpp/build/bin/llama-server -m /home/agent/models/qwen2.5-3b/qwen2.5-3b-instruct-q4_k_m.gguf --ctx-size 2048 --threads 2 --threads-batch 2 --batch-size 512 --ubatch-size 256 --parallel 2 --cont-batching --flash-attn on --port 8080
+Restart=always
+RestartSec=10
+
+# Ressursbegrensninger (tilpasset for 3B modell)
+MemoryMax=4G
+CPUQuota=80%
+
+# Sikkerhet
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/agent/llama.cpp
+
+[Install]
+WantedBy=multi-user.target
